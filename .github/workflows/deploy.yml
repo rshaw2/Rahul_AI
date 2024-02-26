@@ -34,5 +34,6 @@ jobs:
         app-name: ${{ secrets.AZURE_APP_NAME }}
         package: ./output
         slot-name: 'production'
+        azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
