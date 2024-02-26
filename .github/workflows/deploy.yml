@@ -28,9 +28,6 @@ jobs:
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-      - name: List Contents of Working Directory
-        run: ls -R
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
@@ -45,19 +42,34 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
         with:
-          name: .net-app
+          dotnet-version: 8.x # You can adjust the version based on your project
+
+      - name: Build Application
+        run: dotnet build --configuration Release
+
+      - name: Publish Application
+        run: dotnet publish -c Release -o ./publish
+
+      - name: List Contents of Working Directory
+        run: ls -R
 
       - name: Install Azure CLI
-        uses: azure/CLI@v1
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y azure-cli
 
       - name: Azure Login
-        run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        run: az login --service-principal --username ${{ secrets.AZURE_CLIENT_ID }} --password ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
       - name: Set Azure Subscription
         run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy to Azure Web App
-        run: az webapp deploy --name ${{ secrets.AZURE_APP_NAME }} --slot Production --src-path .net-app
+      - name: Deploy to Azure
+        run: |
+          az webapp deploy --name ${{ secrets.AZURE_APP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --src-path ./publish/ --type zip
