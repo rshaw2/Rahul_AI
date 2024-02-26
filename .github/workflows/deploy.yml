@@ -54,7 +54,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Publish Application
-        run: dotnet publish -c Release -o ./publish
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Install Azure CLI
         run: |
@@ -66,4 +66,4 @@ jobs:
 
       - name: Deploy to Azure
         run: |
-          az webapp deploy --name ${{ secrets.AZURE_APP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --src-path ./publish/ --type zip
+          az webapp deploy --name ${{ secrets.AZURE_APP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --src-path ${{env.DOTNET_ROOT}}/myapp --type zip
