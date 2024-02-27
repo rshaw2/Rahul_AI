@@ -34,7 +34,7 @@ jobs:
       - name: 'Run Azure webapp deploy action using Azure Credentials'
         uses: azure/webapps-deploy@v3
         with: 
-          app-name: ntlowcode # Replace with your app name
+          app-name: rahulai # Replace with your app name
           package: './myapp'
       
       - name: logout
