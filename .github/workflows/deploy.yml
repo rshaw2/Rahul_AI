@@ -12,6 +12,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: "Production"
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
       # Checkout the repo
@@ -34,11 +37,12 @@ jobs:
           dotnet publish -c Release --property:PublishDir='./myapp'
 
       # Deploy to Azure Web apps
-      - name: 'Run Azure webapp deploy action using Azure Credentials'
+      - name: "Run Azure webapp deploy action using Azure Credentials"
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_APP_NAME }}
-          package: './myapp'
+          package: "./myapp"
 
       - name: logout
         run: |
