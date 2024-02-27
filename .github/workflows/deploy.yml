@@ -14,12 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repo
-      - uses: actions/checkout@main
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       # Setup .NET Core SDK
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
@@ -36,6 +30,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repo
+      - uses: actions/checkout@main
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       # Deploy to Azure Web apps
       - name: "Run Azure webapp deploy action using Azure Credentials"
         uses: azure/webapps-deploy@v3
